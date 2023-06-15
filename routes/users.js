@@ -84,3 +84,5 @@ function deleteUser(req, res) {
         res.json({message: `${user.nom} deleted`});
     })
 }
+
+module.exports = { getUsers, getUser, postUser, updateUser, deleteUser, getUsersSansPagination}
