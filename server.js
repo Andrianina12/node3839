@@ -79,7 +79,6 @@ router.post('/register', function(req, res) {
   
   User.create({
     name : req.body.name,
-    email : req.body.email,
     password : hashedPassword
   },
   function (err, user) {
