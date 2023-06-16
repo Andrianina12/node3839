@@ -11,6 +11,7 @@ var config = require('./config');
 
 let assignment = require('./routes/assignments');
 let user = require('./routes/users');
+let Users = require('./model/user');
 
 let mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
@@ -77,7 +78,7 @@ router.post('/register', function(req, res) {
 
   var hashedPassword = bcrypt.hashSync(req.body.password, 8);
   
-  User.create({
+  Users.create({
     name : req.body.name,
     password : hashedPassword
   },
