@@ -5,13 +5,12 @@ let bodyParser = require('body-parser');
 var router = express.Router();
 router.use(bodyParser.urlencoded({ extended: false }));
 router.use(bodyParser.json());
-var jwt = require('jsonwebtoken');
-var bcrypt = require('bcryptjs');
-var config = require('./config');
+
 
 let assignment = require('./routes/assignments');
 let user = require('./routes/users');
-let Users = require('./model/user');
+let auth = require('./routes/auth');
+
 
 let mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
@@ -20,7 +19,9 @@ mongoose.Promise = global.Promise;
 // remplacer toute cette chaine par l'URI de connexion à votre propre base dans le cloud s
 //const uri = 'mongodb+srv://mb:toto@cluster0.5e6cs7n.mongodb.net/assignments?retryWrites=true&w=majority';
 
-const uri = 'mongodb+srv://root:root@cluster0.c4jt7md.mongodb.net/?retryWrites=true&w=majority'
+//const uri = 'mongodb+srv://root:root@cluster0.c4jt7md.mongodb.net/Mean3839?retryWrites=true&w=majority';
+
+const uri = 'mongodb+srv://mean3839:mean3839@cluster0.slx8jfw.mongodb.net/mean3839?retryWrites=true&w=majority';
 
 const options = {
   useNewUrlParser: true,
@@ -55,6 +56,8 @@ let port = process.env.PORT || 8010;
 // les routes
 const prefix = '/api';
 
+app.route(prefix + '/').get(assignment.getAssignmentsSansPagination)
+
 app.route(prefix + '/assignments')
   .get(assignment.getAssignments)
   .post(assignment.postAssignment)
@@ -74,23 +77,17 @@ app.route(prefix + '/users/:id')
   .get(user.getUser)
   .delete(user.deleteUser);  
 
-router.post('/register', function(req, res) {
+app.route(prefix + '/register')
+  .post(auth.register);
 
-  var hashedPassword = bcrypt.hashSync(req.body.password, 8);
-  
-  Users.create({
-    name : req.body.name,
-    password : hashedPassword
-  },
-  function (err, user) {
-    if (err) return res.status(500).send("There was a problem registering the user.")
-    // create a token
-    var token = jwt.sign({ id: user._id }, config.secret, {
-      expiresIn: 86400 // expires in 24 hours
-    });
-    res.status(200).send({ auth: true, token: token });
-  }); 
-});
+app.route(prefix + '/me')
+  .get(auth.me);
+
+app.route(prefix + '/auth')
+  .post(auth.login);
+
+app.route(prefix + '/logout')
+  .get(auth.logout)
 
 // On démarre le serveur
 app.listen(port, "0.0.0.0");

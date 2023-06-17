@@ -3,10 +3,12 @@ let Schema = mongoose.Schema;
 var aggregatePaginate = require("mongoose-aggregate-paginate-v2");
 
 let AssignmentSchema = Schema({
-    id: Number,
-    dateDeRendu: Date,
-    nom: String,
-    rendu: Boolean
+    auteur: String,
+    dateRendu: Date,
+    matiere: String,
+    rendu: Boolean,
+    note: Number,
+    remarque: String
 });
 
 AssignmentSchema.plugin(aggregatePaginate);
@@ -16,4 +18,4 @@ AssignmentSchema.plugin(aggregatePaginate);
 // soit assignments
 // Si on met un nom "proche", Mongoose choisira la collection
 // dont le nom est le plus proche
-module.exports = mongoose.model('Assignments', AssignmentSchema);
+module.exports = mongoose.model('assignments', AssignmentSchema);

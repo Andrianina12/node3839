@@ -1,4 +1,4 @@
-let Assignment = require('../model/assignment');
+let Assignment = require('./../model/assignment');
 
 // Récupérer tous les assignments (GET)
 function getAssignmentsSansPagination(req, res){
@@ -88,4 +88,4 @@ function deleteAssignment(req, res) {
 
 
 
-module.exports = { getAssignments, postAssignment, getAssignment, updateAssignment, deleteAssignment };
+module.exports = { getAssignments, postAssignment, getAssignment, updateAssignment, deleteAssignment, getAssignmentsSansPagination };

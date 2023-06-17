@@ -15,4 +15,4 @@ UsersSchema.plugin(aggregatePaginate);
 // soit Users
 // Si on met un nom "proche", Mongoose choisira la collection
 // dont le nom est le plus proche
-module.exports = mongoose.model('Users', UsersSchema);
+module.exports = mongoose.model('users', UsersSchema);
