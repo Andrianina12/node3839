@@ -22,14 +22,14 @@ function register(req, res) {
 
 function me(req, res) {
     var token = req.headers['x-access-token'];
-    if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
+    if (!token) return res.status(401).send({ auth: false, message: 'Aucun token fourni.' });
     
     jwt.verify(token, config.secret, function(err, decoded) {
-      if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
+      if (err) return res.status(500).send({ auth: false, message: 'Échec de l\'authentification du token.' });
       
       User.findById(decoded.id, function (err, user) {
-        if (err) return res.status(500).send("There was a problem finding the user.");
-        if (!user) return res.status(404).send("No user found.");
+        if (err) return res.status(500).send("Une erreur est survenue.");
+        if (!user) return res.status(404).send("Aucun utilisateur trouvé.");
         
         res.status(200).send(user);
       });
@@ -38,11 +38,11 @@ function me(req, res) {
 
 function login(req, res) {
     User.findOne({ email: req.body.email }, function (err, user) {
-        if (err) return res.status(500).send('Error on the server.');
-        if (!user) return res.status(404).send('No user found.');
+        if (err) return res.status(500).send('Une erreur est survenue.');
+        if (!user) return res.status(404).send('Aucun utilisateur ne correspond à votre email.');
         
         var passwordIsValid = bcrypt.compareSync(req.body.password, user.password);
-        if (!passwordIsValid) return res.status(400).send('Mot de passe incorrect');
+        if (!passwordIsValid) return res.status(400).send('Mot de passe incorrect.');
         
         var token = jwt.sign({ id: user._id }, config.secret, {
           expiresIn: 86400 // expires in 24 hours
