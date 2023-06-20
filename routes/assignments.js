@@ -66,7 +66,7 @@ function getAssignments(req, res) {
             auteur: assignment.auteur,
             dateRendu: assignment.dateRendu,
             matiere: assignment.matiere,
-            rendu: assignment.rendu,
+            rendu: JSON.parse(assignment.rendu),
             note: assignment.note,
             remarque: assignment.remarque,
             subject: subject, // Ajout des attributs de la matière
