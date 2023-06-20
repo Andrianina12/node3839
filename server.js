@@ -60,12 +60,12 @@ app.route(prefix + '/').get(assignment.getAssignmentsSansPagination)
 
 app.route(prefix + '/assignments')
   .get(assignment.getAssignments)
-  .post(assignment.postAssignment)
-  .put(assignment.updateAssignment);
+  .post(checkUserRole('admin'),assignment.postAssignment)
+  .put(checkUserRole('admin'),assignment.updateAssignment);
 
 app.route(prefix + '/assignments/:id')
   .get(assignment.getAssignment)
-  .delete(assignment.deleteAssignment);
+  .delete(checkUserRole('admin'),assignment.deleteAssignment);
 
 
 app.route(prefix + '/users')
