@@ -1,32 +1,87 @@
 let Assignment = require('./../model/assignment');
+let Subject = require('./../model/subject'); // Import du modèle Subject
+
+// Récupérer tous les assignments avec les attributs de la matière (GET)
+
+
 
 // Récupérer tous les assignments (GET)
-function getAssignmentsSansPagination(req, res){
-    Assignment.find((err, assignments) => {
-        if(err){
-            res.send(err)
-        }
-
-        res.send(assignments);
-    });
+async function getAssignmentsSansPagination(req, res){
+    try {
+        // Récupération de tous les documents de la collection "Assignments"
+        const assignments = await Assignment.find();
+    
+        // Récupération des attributs de la matière (collection "Subjects") pour chaque assignment
+        const populatedAssignments = await Promise.all(
+          assignments.map(async (assignment) => {
+            // Recherche de la matière correspondante dans la collection "Subjects"
+            const subject = await Subject.findOne({ code: assignment.matiere });
+    
+            // Création d'un nouvel objet Assignment avec les attributs de la matière inclus
+            const populatedAssignment = {
+              _id: assignment._id,
+              auteur: assignment.auteur,
+              dateRendu: assignment.dateRendu,
+              matiere: assignment.matiere,
+              rendu: assignment.rendu,
+              note: assignment.note,
+              remarque: assignment.remarque,
+              subject: subject, // Ajout des attributs de la matière
+            };
+    
+            return populatedAssignment;
+          })
+        );
+    
+        res.send(populatedAssignments);
+      } catch (error) {
+        console.error(error);
+        res.status(500).send(error);
+      }
 }
 
+// Récupérer tous les assignments avec les attributs de la matière et pagination (GET)
 function getAssignments(req, res) {
     var aggregateQuery = Assignment.aggregate();
-    
-    Assignment.aggregatePaginate(aggregateQuery,
-      {
-        page: parseInt(req.query.page) || 1,
-        limit: parseInt(req.query.limit) || 10,
-      },
-      (err, assignments) => {
-        if (err) {
-          res.send(err);
-        }
-        res.send(assignments);
+    const options = {
+      page: parseInt(req.query.page) || 1,
+      limit: parseInt(req.query.limit) || 10,
+    };
+  
+    Assignment.aggregatePaginate(aggregateQuery, options, async (err, assignments) => {
+      if (err) {
+        res.send(err);
+        return;
       }
-    );
-   }
+  
+      // Récupération des attributs de la matière (collection "Subjects") pour chaque assignment
+      const populatedAssignments = await Promise.all(
+        assignments.docs.map(async (assignment) => {
+          // Recherche de la matière correspondante dans la collection "Subjects"
+          const subject = await Subject.findOne({ code: assignment.matiere });
+  
+          // Création d'un nouvel objet Assignment avec les attributs de la matière inclus
+          const populatedAssignment = {
+            _id: assignment._id,
+            auteur: assignment.auteur,
+            dateRendu: assignment.dateRendu,
+            matiere: assignment.matiere,
+            rendu: assignment.rendu,
+            note: assignment.note,
+            remarque: assignment.remarque,
+            subject: subject, // Ajout des attributs de la matière
+          };
+  
+          return populatedAssignment;
+        })
+      );
+  
+      // Remplacer les assignments docs par les assignments avec les attributs de la matière
+      assignments.docs = populatedAssignments;
+  
+      res.send(assignments);
+    });
+  }
    
 // Récupérer un assignment par son id (GET)
 function getAssignment(req, res){
