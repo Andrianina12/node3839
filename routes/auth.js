@@ -22,7 +22,7 @@ function register(req, res) {
 }
 
 function me(req, res) {
-    var token = req.headers['x-access-token'];
+  const token = req.headers.authorization;
     if (!token) return res.status(401).send({ auth: false, message: 'Aucun token fourni.' });
     
     jwt.verify(token, config.secret, function(err, decoded) {
