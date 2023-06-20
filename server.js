@@ -10,6 +10,7 @@ router.use(bodyParser.json());
 let assignment = require('./routes/assignments');
 let user = require('./routes/users');
 let auth = require('./routes/auth');
+let subject = require('./routes/subjects');
 
 
 let mongoose = require('mongoose');
@@ -42,7 +43,7 @@ mongoose.connect(uri, options)
 // Pour accepter les connexions cross-domain (CORS)
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
   next();
 });
@@ -60,12 +61,15 @@ app.route(prefix + '/').get(assignment.getAssignmentsSansPagination)
 
 app.route(prefix + '/assignments')
   .get(assignment.getAssignments)
-  .post(auth.checkUserRole('admin'),assignment.postAssignment)
-  .put(auth.checkUserRole('admin'),assignment.updateAssignment);
+  .post(assignment.postAssignment)
+  .put(assignment.updateAssignment);
+  //.post(auth.checkUserRole('admin'),assignment.postAssignment)
+ // .put(auth.checkUserRole('admin'),assignment.updateAssignment);
 
 app.route(prefix + '/assignments/:id')
   .get(assignment.getAssignment)
-  .delete(auth.checkUserRole('admin'),assignment.deleteAssignment);
+  .delete(assignment.deleteAssignment);
+ // .delete(auth.checkUserRole('admin'),assignment.deleteAssignment);
 
 
 app.route(prefix + '/users')
@@ -89,6 +93,9 @@ app.route(prefix + '/auth')
 app.route(prefix + '/logout')
   .get(auth.logout)
 
+
+app.route(prefix + '/subjects')
+  .get(subject.getSubjects)
 // On démarre le serveur
 app.listen(port, "0.0.0.0");
 console.log('Serveur démarré sur http://localhost:' + port);

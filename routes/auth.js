@@ -69,7 +69,7 @@ function checkUserRole(role) {
     const token = req.headers.authorization;
 
     if (!token) {
-      return res.status(401).json({ message: 'Token manquant' });
+      return res.status(401).send('Token manquant');
     }
 
     try {
@@ -79,10 +79,10 @@ function checkUserRole(role) {
         req.user = decoded; // Stocker les informations de l'utilisateur dans la requête
         next(); // Autoriser l'accès à la prochaine étape du middleware
       } else {
-        res.status(403).json({ message: 'Accès interdit' });
+        res.status(403).send('Accès interdit');
       }
     } catch (error) {
-      res.status(401).json({ message: 'Token invalide' });
+      res.status(401).send('Token invalide');
     }
   }
 }
