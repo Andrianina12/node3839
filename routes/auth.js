@@ -49,8 +49,13 @@ function login(req, res) {
         var token = jwt.sign({ id: user._id }, config.secret, {
           expiresIn: 86400 // expires in 24 hours
         });
-        
-        res.status(200).send({ auth: true, token: token });
+        response = {
+          "role" : user.role,
+          "token": token,
+          "email": user.email,
+          "name": user.name
+        }
+        res.status(200).send({ auth: true, user: response });
       });
 }
 
